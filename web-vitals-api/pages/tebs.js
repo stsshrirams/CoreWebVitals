@@ -4,18 +4,18 @@ import { useState } from 'react';
 const API_KEY = 'AIzaSyDR89LoKuH-oSsqT-74O6pFMncbxgYVXSg'; // Replace with actual API key
 const URLS = [
     'https://www.taxexemptbonds.org/',
-    'https://www.taxexemptbonds.org/irs-8038-corner/e-file-form-8038-cp/',
-    'https://www.taxexemptbonds.org/contact-us/',
-    'https://www.taxexemptbonds.org/features/',
-    'https://www.taxexemptbonds.org/blog/meet-tax-exempt-bonds-start-your-journey-to-seamless-8038-cp-filings-and-credit-claims/',
-    'https://www.taxexemptbonds.org/irs-8038-corner/form-8038-cp-due-date-finder/',
-    'https://www.taxexemptbonds.org/irs-8038-corner/form-8038-cp-schedule-a/',
-    'https://www.taxexemptbonds.org/irs-8038-corner/',
-    'https://www.taxexemptbonds.org/terms-use/',
-    'https://www.taxexemptbonds.org/irs-8038-corner/what-is-form-8038-cp/',
-    'https://www.taxexemptbonds.org/irs-8038-corner/form-8038-cp-instructions/',
-    'https://www.taxexemptbonds.org/blog/',
-    'https://www.taxexemptbonds.org/privacy-policy/',
+    // 'https://www.taxexemptbonds.org/irs-8038-corner/e-file-form-8038-cp/',
+    // 'https://www.taxexemptbonds.org/contact-us/',
+    // 'https://www.taxexemptbonds.org/features/',
+    // 'https://www.taxexemptbonds.org/blog/meet-tax-exempt-bonds-start-your-journey-to-seamless-8038-cp-filings-and-credit-claims/',
+    // 'https://www.taxexemptbonds.org/irs-8038-corner/form-8038-cp-due-date-finder/',
+    // 'https://www.taxexemptbonds.org/irs-8038-corner/form-8038-cp-schedule-a/',
+    // 'https://www.taxexemptbonds.org/irs-8038-corner/',
+    // 'https://www.taxexemptbonds.org/terms-use/',
+    // 'https://www.taxexemptbonds.org/irs-8038-corner/what-is-form-8038-cp/',
+    // 'https://www.taxexemptbonds.org/irs-8038-corner/form-8038-cp-instructions/',
+    // 'https://www.taxexemptbonds.org/blog/',
+    // 'https://www.taxexemptbonds.org/privacy-policy/',
    
 ];
 
