@@ -68,9 +68,8 @@ const WebVitalsReport = () => {
 
     const handleGenerateReport = async () => {
         setLoading(true);
-        setPdfUrl(null);
         setLogMessages(["Starting Core Web Vitals report generation..."]);
-
+    
         const results = [];
         for (const url of URLS) {
             log(`Fetching data for: ${url} (Mobile)`);
@@ -81,7 +80,7 @@ const WebVitalsReport = () => {
             } else {
                 log(`❌ Failed to fetch Mobile data for: ${url}`);
             }
-
+    
             log(`Fetching data for: ${url} (Desktop)`);
             const desktopData = await fetchCoreWebVitals(url, 'desktop');
             if (desktopData) {
@@ -91,28 +90,38 @@ const WebVitalsReport = () => {
                 log(`❌ Failed to fetch Desktop data for: ${url}`);
             }
         }
-
-        log("Sending data to generate PDF...");
-        const response = await fetch('/api/generate-pdf', {
-            method: 'POST',
+    
+        log("Sending data to generate text file...");
+    
+        const response = await fetch('/api/generate-text', { 
+            method: 'POST', 
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: results })
+            body: JSON.stringify({ data: results }) 
         });
-
-        if (response.ok) {
-            const { url } = await response.json();
-            log("✅ PDF generated successfully.");
-            setPdfUrl(url);
-        } else {
-            log("❌ Error generating PDF.");
+    
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
+    
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+    
+        // Create a download link
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "core_web_vitals_report.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    
+        log("✅ Text file downloaded successfully.");
         setLoading(false);
     };
+    
 
     return (
         <div style={{ textAlign: 'center', marginTop: '50px' }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '50px' }}>WealthRabbit Core Web Vitals Report</h1>
+            <h1  style={{ textAlign: 'center', marginBottom: '50px' }}>WealthRabbit Core Web Vitals Report</h1>
             <button onClick={handleGenerateReport} disabled={loading} style={{ padding: '10px 20px', marginRight: '10px', marginBottom: '50px' }}>
                 {loading ? 'Processing...' : 'Generate Report'}
             </button>
