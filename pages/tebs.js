@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-const API_KEY = 'AIzaSyDR89LoKuH-oSsqT-74O6pFMncbxgYVXSg'; // Replace with actual API key
+const API_KEY = process.env.NEXT_PUBLIC_API_Key; // Replace with actual API key
 const URLS = [
     'https://www.taxexemptbonds.org/',
     // 'https://www.taxexemptbonds.org/irs-8038-corner/e-file-form-8038-cp/',
