@@ -1,4 +1,3 @@
-import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 
@@ -12,43 +11,45 @@ const evaluateMetrics = (LCP, FID, CLS, INP) => {
 };
 
 export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method Not Allowed' });
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
     }
 
-    const { data } = req.body;
-    if (!data || data.length === 0) {
-        return res.status(400).json({ success: false, message: 'No data provided for the report.' });
+    if (req.method !== 'POST') {
+        return res.status(405).json({ message: "Method Not Allowed" });
     }
 
     try {
-        const doc = new PDFDocument();
-        const pdfPath = path.join(process.cwd(), 'public', 'core_web_vitals_report.pdf');
-        const stream = fs.createWriteStream(pdfPath);
-        doc.pipe(stream);
+        const { data } = req.body;
+        if (!data || !Array.isArray(data)) {
+            return res.status(400).json({ message: "Invalid request data" });
+        }
 
-        doc.fontSize(18).text('Core Web Vitals Report', { align: 'center' });
-        doc.moveDown();
+        console.log("Generating Core Web Vitals report as a text file...");
 
-        data.forEach((entry, index) => {
-            const { LCP, FID, CLS, INP } = entry;
-            const status = evaluateMetrics(LCP, FID, CLS, INP);
+        let reportText = "Core Web Vitals Report\n\n";
+        reportText += "URL | Strategy | LCP | FID | CLS | INP\n";
+        reportText += "---------------------------------------------------------\n";
 
-            doc.fontSize(12).text(`URL: ${entry.url}`, { underline: true });
-            doc.text(`Strategy: ${entry.strategy}`);
-            doc.text(`LCP: ${LCP} sec (${status.LCP})`);
-            doc.text(`FID: ${FID} sec (${status.FID})`);
-            doc.text(`CLS: ${CLS} (${status.CLS})`);
-            doc.text(`INP: ${INP} sec (${status.INP})`);
-            doc.moveDown();
-            if (index < data.length - 1) doc.moveDown();
+        data.forEach(item => {
+            const evaluation = evaluateMetrics(item.LCP, item.FID, item.CLS, item.INP);
+            reportText += `${item.url} | ${item.strategy} | ${item.LCP} - ${evaluation.LCP} | ${item.FID} - ${evaluation.FID} | ${item.CLS} - ${evaluation.CLS} | ${item.INP} - ${evaluation.INP}\n`;
         });
 
-        doc.end();
-        stream.on('finish', () => {
-            res.status(200).json({ success: true, url: '/core_web_vitals_report.pdf' });
-        });
+        const filePath = path.join('/tmp', 'core_web_vitals_report.txt');
+        fs.writeFileSync(filePath, reportText);
+
+        console.log("✅ Text file generated successfully!");
+
+        res.setHeader('Content-Type', 'text/plain');
+        res.setHeader('Content-Disposition', 'attachment; filename="core_web_vitals_report.txt"');
+        res.send(reportText);
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Error generating PDF', error });
+        console.error("❌ Text file generation error:", error);
+        res.status(500).json({ message: error.message });
     }
 }
